@@ -21,15 +21,15 @@ public class JobParameterConfiguration {
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job BatchJob() {
-        return this.jobBuilderFactory.get("Job")
-                .start(step1())
-                .next(step2())
+    public Job JobParameter() {
+        return this.jobBuilderFactory.get("JobParameter")
+                .start(jobParameterStep1())
+                .next(jobParameterStep2())
                 .build();
     }
 
     @Bean
-    public Step step1() {
+    public Step jobParameterStep1() {
         return stepBuilderFactory.get("step1")
                 .tasklet(new Tasklet() {
                     @Override
@@ -58,7 +58,7 @@ public class JobParameterConfiguration {
     }
 
     @Bean
-    public Step step2() {
+    public Step jobParameterStep2() {
         return stepBuilderFactory.get("step2")
                 .tasklet(new Tasklet() {
                     @Override
