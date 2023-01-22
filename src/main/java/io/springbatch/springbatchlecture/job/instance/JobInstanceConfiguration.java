@@ -1,7 +1,8 @@
-package io.springbatch.springbatchlecture;
+package io.springbatch.springbatchlecture.job.instance;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -14,13 +15,13 @@ import org.springframework.context.annotation.Configuration;
 
 @RequiredArgsConstructor
 @Configuration
-public class JobConfiguration {
+public class JobInstanceConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job job() {
+    public Job BatchJob() {
         return this.jobBuilderFactory.get("Job")
                 .start(step1())
                 .next(step2())
@@ -33,7 +34,11 @@ public class JobConfiguration {
                 .tasklet(new Tasklet() {
                     @Override
                     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-                        System.out.println("step1 has executed");
+                        JobInstance jobInstance = contribution.getStepExecution().getJobExecution().getJobInstance();
+                        System.out.println("jobInstance.getId() : " + jobInstance.getId());
+                        System.out.println("jobInstance.getInstanceId() : " + jobInstance.getInstanceId());
+                        System.out.println("jobInstance.getJobName() : " + jobInstance.getJobName());
+                        System.out.println("jobInstance.getJobVersion : " + jobInstance.getVersion());
                         return RepeatStatus.FINISHED;
                     }
                 })
