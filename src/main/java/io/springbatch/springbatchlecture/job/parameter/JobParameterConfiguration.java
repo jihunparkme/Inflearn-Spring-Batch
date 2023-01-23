@@ -39,11 +39,13 @@ public class JobParameterConfiguration {
                         String name = jobParameters.getString("name");
                         long seq = jobParameters.getLong("seq");
                         Date date = jobParameters.getDate("date");
+                        Double age = jobParameters.getDouble("age");
 
                         System.out.println("===========================");
                         System.out.println("name:" + name);
                         System.out.println("seq: " + seq);
                         System.out.println("date: " + date);
+                        System.out.println("age: " + age);
                         System.out.println("===========================");
 
                         Map<String, Object> jobParameters2 = chunkContext.getStepContext().getJobParameters();

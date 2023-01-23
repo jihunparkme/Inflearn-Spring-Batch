@@ -18,7 +18,7 @@ public class JobParameterTest implements ApplicationRunner {
     JobLauncher jobLauncher;
 
     @Autowired
-    Job job;
+    Job JobParameter;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -30,6 +30,6 @@ public class JobParameterTest implements ApplicationRunner {
                 .addDouble("age", 29.5)
                 .toJobParameters();
 
-        jobLauncher.run(job, jobParameters);
+        jobLauncher.run(JobParameter, jobParameters);
     }
 }
