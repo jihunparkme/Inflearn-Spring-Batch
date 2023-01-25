@@ -21,15 +21,15 @@ public class JobExecutionConfiguration {
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job BatchJob() {
-        return this.jobBuilderFactory.get("Job")
-                .start(step1())
-                .next(step2())
+    public Job JobExecutionConfiguration() {
+        return this.jobBuilderFactory.get("JobExecutionConfiguration")
+                .start(JobExecutionConfigurationStep1())
+                .next(JobExecutionConfigurationStep2())
                 .build();
     }
 
     @Bean
-    public Step step1() {
+    public Step JobExecutionConfigurationStep1() {
         return stepBuilderFactory.get("step1")
                 .tasklet(new Tasklet() {
                     @Override
@@ -46,7 +46,7 @@ public class JobExecutionConfiguration {
     }
 
     @Bean
-    public Step step2() {
+    public Step JobExecutionConfigurationStep2() {
         return stepBuilderFactory.get("step2")
                 .tasklet((contribution, chunkContext) -> {
 //                    throw new RuntimeException("JobExecution has failed");
