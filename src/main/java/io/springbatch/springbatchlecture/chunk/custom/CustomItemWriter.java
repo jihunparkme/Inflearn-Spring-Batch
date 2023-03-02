@@ -1,13 +1,17 @@
 package io.springbatch.springbatchlecture.chunk.custom;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemWriter;
 
 import java.util.List;
 
-public class CustomItemWriter implements ItemWriter<Customer> {
+@Slf4j
+public class CustomItemWriter implements ItemWriter<String> {
 
     @Override
-    public void write(List<? extends Customer> items) throws Exception {
-        items.forEach(item -> System.out.println(item));
+    public void write(List<? extends String> items) throws Exception {
+        for (String item : items) {
+            log.info("items : {}", item);
+        }
     }
 }
