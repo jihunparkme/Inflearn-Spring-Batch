@@ -12,16 +12,17 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.retry.RetryPolicy;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Configuration
 @RequiredArgsConstructor
+@Configuration
 public class RetryConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
@@ -42,38 +43,47 @@ public class RetryConfiguration {
                 .processor(processor())
                 .writer(writer())
                 .faultTolerant()
-                    .skip(RetryableException.class) // Retry 에서 다시 발생하는 예외를 보완
+                    .skip(RetryableException.class) // RetryableException 두 번 발생 시 skip 처리
                     .skipLimit(2)
-                    .retryPolicy(limitCheckingItemSkipPolicy()) // 아래와 동일하게 동작
-//                    .retry(RetryableException.class)
-//                    .retryLimit(2)
                 .build();
-    }
-
-    public SimpleRetryPolicy limitCheckingItemSkipPolicy() {
-        Map<Class<? extends Throwable>, Boolean> exceptionClass = new HashMap<>();
-        exceptionClass.put(RetryableException.class, true);
-
-        SimpleRetryPolicy simpleRetryPolicy = new SimpleRetryPolicy(2, exceptionClass);
-
-        return simpleRetryPolicy;
     }
 
     public ListItemReader<String> reader() {
         List<String> items = new ArrayList<>();
+
         for (int i = 0; i < 30; i++) {
             items.add(String.valueOf(i));
         }
+
         return new ListItemReader<>(items);
     }
 
+    @Bean
     public ItemProcessor processor() {
         RetryItemProcessor processor = new RetryItemProcessor();
         return processor;
     }
 
+    @Bean
     public ItemWriter writer() {
         RetryItemWriter writer = new RetryItemWriter();
         return writer;
+    }
+
+    @Bean
+    public RetryTemplate retryTemplate() {
+
+        Map<Class<? extends Throwable>, Boolean> exceptionClass = new HashMap<>();
+        exceptionClass.put(RetryableException.class, true);
+
+        FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
+        backOffPolicy.setBackOffPeriod(2000); // 지정한 시간만큼 대기 후 재시도
+
+        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(2, exceptionClass);
+        RetryTemplate retryTemplate = new RetryTemplate();
+        retryTemplate.setBackOffPolicy(backOffPolicy);
+        retryTemplate.setRetryPolicy(retryPolicy);
+
+        return retryTemplate;
     }
 }
