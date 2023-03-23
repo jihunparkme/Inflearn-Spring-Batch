@@ -25,7 +25,6 @@ public class ProductPartitioner implements Partitioner {
         int number = 0;
 
         for (int i = 0; i < productList.length; i++) {
-
             ExecutionContext value = new ExecutionContext();
 
             result.put("partition" + number, value);
