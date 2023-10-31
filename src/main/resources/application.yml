@@ -16,8 +16,13 @@ spring:
   batch:
     jdbc:
       initialize-schema: embedded
-    job:
-      enabled: false
+#    job:
+#      enabled: false
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+
 
 
 ---
@@ -36,3 +41,10 @@ spring:
       initialize-schema: always
     job:
       enabled: false
+#      enabled: false
+logging:
+  level:
+    root: INFO
+    org:
+      org.springframework.web: INFO
+
